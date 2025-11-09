@@ -1,5 +1,9 @@
 
-# Mapache 64
+# Mapache 64 (Windows Ver.)
+
+## **IMPORTANT**
+Make sure that, when building a game, you are on MinGW64 and have installed/updated: **coreutils diffutils dos2unix and python**.
+Not doing so will result in bash errors!
 
 * Repository: [github.com/ucsbieee/mapache64](https://github.com/ucsbieee/mapache64)
 * Website: [mapache64.ucsbieee.org](https://mapache64.ucsbieee.org)

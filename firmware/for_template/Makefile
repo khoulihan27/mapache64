@@ -16,20 +16,44 @@ BUILD_DIR = build
 DUMP_DIR = dump
 
 
-
 # ============== DO NOT EDIT BELOW THIS LINE ============== #
 
 .PHONY: all dump run verify clean
 
 MACHINE = mapache64
 
+# check if OS is Windows for Windows users --> ca65 oddities with current windows version/naming
+# searches for NT in $(shell uname) --> works with MINGW...unsure about others
+UNAME_OUT := $(shell uname -a 2>/dev/null)
+UNAME_SEARCH := NT
+
+OSFLAGS :=
+ifeq ($(OS), Windows_NT)
+	OSFLAGS += WIN
+else ifeq ($(findstring $(UNAME_SEARCH), $(UNAME_OUT)), $(UNAME_SEARCH))
+	OSFLAGS += WIN
+else
+	OSFLAGS += OTHER
+endif
+
+$(info OS: $(OSFLAGS))
+$(info OS: $(shell uname))
+
 # Instruct that compilation and assembly should be done using cc65/ca65 and
 # specify some required flags (https://cc65.github.io/doc/customizing.html#toc9)
 AS = ca65
-ASFLAGS = --cpu 65c02
-
 CC = cc65
-CFLAGS = --cpu 65c02 -t none -Oi
+CFLAGS = --cpu 65C02 -t none -O
+ASFLAGS =
+
+ifeq ($(OSFLAGS), WIN)
+	ASFLAGS = --cpu 65C02
+else
+	ASFLAGS = --cpu 65c02
+endif
+
+$(info OS: $(ASFLAGS))
+
 
 PYTHON = python3
 
@@ -128,6 +152,8 @@ ${BUILD_DIR}/%.c.o: %.c ${HEADERS}
 ${BUILD_DIR}/%.s.o: %.s ${RESOURCES}
 	@mkdir -p $(dir $@)
 	$(AS) --bin-include-dir ${RESOURCE_DIR} $(ASFLAGS) $< -o $@
+
+
 
 # Purge all built files
 clean:
